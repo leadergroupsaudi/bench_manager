@@ -266,24 +266,65 @@ def verify_password(site_name, mysql_password):
 		frappe.throw("MySQL password is incorrect")
 	return "console"
 
-
 @frappe.whitelist()
 def create_site(site_name, install_erpnext, mysql_password, admin_password, key, a_async=True):
 	verify_whitelisted_call()
-	commands = [
-		"bench new-site --mariadb-root-password {mysql_password} --admin-password {admin_password} --no-mariadb-socket {site_name}".format(
-			site_name=site_name, admin_password=admin_password, mysql_password=mysql_password
+
+	# REMOTE DB CONFIG (TENANT DATABASE SERVER)
+	tenant_db_host = "10.1.1.205"
+	tenant_db_user = "frappe_admin"
+	tenant_db_password = "Leader@321"
+	# tenant_db_name = "lesaasprod3"
+
+	commands = []
+
+	# CREATE SITE USING REMOTE DB
+	create_cmd = (
+		f"bench new-site {site_name} "
+		f"--db-host {tenant_db_host} "
+		f"--db-root-username {tenant_db_user} "
+		f"--db-root-password '{tenant_db_password}' "
+		f"--db-name {site_name} "
+		f"--mariadb-user-host-login-scope='%' "
+		f"--admin-password '{admin_password}' "
+		f"--no-mariadb-socket"
+	)
+
+	commands.append(create_cmd)
+
+	############# core code##################
+	# if install_erpnext == "true":
+	# 	with open("apps.txt", "r") as f:
+	# 		app_list = f.read()
+	# 	if "erpnext" not in app_list:
+	# 		commands.append("bench get-app erpnext")
+	# 	commands.append(
+	# 		"bench --site {site_name} install-app erpnext".format(site_name=site_name)
+	# 	)
+	# 	commands.append(f"bench --site {site_name} migrate".format(site_name=site_name))
+
+	###############################
+	commands.append(
+			"bench --site {site_name} install-app payments".format(site_name=site_name)
 		)
-	]
-	if install_erpnext == "true":
-		with open("apps.txt", "r") as f:
-			app_list = f.read()
-		if "erpnext" not in app_list:
-			commands.append("bench get-app erpnext")
-		commands.append(
+	commands.append(
 			"bench --site {site_name} install-app erpnext".format(site_name=site_name)
 		)
-		commands.append(f"bench --site {site_name} migrate".format(site_name=site_name))
+	commands.append(
+			"bench --site {site_name} install-app hrms".format(site_name=site_name)
+		)
+	
+	commands.append(
+			"bench --site {site_name} install-app lending".format(site_name=site_name)
+		)
+
+	commands.append(
+			"bench --site {site_name} install-app foxerp_saas".format(site_name=site_name)
+		)
+	
+	
+	commands.append(f"bench --site {site_name} migrate".format(site_name=site_name))
+	frappe.log_error("command 287",str({"aa":commands,"ab":site_name}))
 	frappe.enqueue(
 		"bench_manager.bench_manager.doctype.site.site.jop_site_creation",
 		commands=commands,
@@ -293,12 +334,15 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key,
 		is_async = a_async
 	)
 
+
+
 def jop_site_creation(commands, doctype, key,site_name):
-    from bench_manager.bench_manager.utils import run_command
-    run_command(commands=commands,doctype="Bench Settings",key=key)
-    sync_sites()
-    site = frappe.get_doc("Site",site_name)
-    if site.developer_flag == 1:
-            site.update_app_list()
-    site.save()
-    frappe.db.commit()
+	from bench_manager.bench_manager.utils import run_command
+	run_command(commands=commands,doctype="Bench Settings",key=key)
+	sync_sites()
+	site = frappe.get_doc("Site",site_name)
+	if site.developer_flag == 1:
+			site.update_app_list()
+	site.save()
+	frappe.db.commit()
+
