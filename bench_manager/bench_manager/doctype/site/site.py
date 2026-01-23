@@ -268,77 +268,61 @@ def verify_password(site_name, mysql_password):
 
 @frappe.whitelist()
 def create_site(site_name, install_erpnext, mysql_password, admin_password, key, a_async=True):
-	verify_whitelisted_call()
+    verify_whitelisted_call()
 
-	# REMOTE DB CONFIG (TENANT DATABASE SERVER)
-	tenant_db_host = "10.1.1.205"
-	tenant_db_user = "frappe_admin"
-	tenant_db_password = "Leader@321"
-	# tenant_db_name = "lesaasprod3"
+    # REMOTE DB CONFIG (TENANT DATABASE SERVER)
+    tenant_db_host = "10.1.1.205"
+    tenant_db_user = "frappe_admin"
+    tenant_db_password = "Leader@321"
 
-	commands = []
+    commands = []
+    BENCH_BIN = "/usr/local/bin/bench"
 
-	# CREATE SITE USING REMOTE DB
-	create_cmd = (
-		f"bench new-site {site_name} "
-		f"--db-host {tenant_db_host} "
-		f"--db-root-username {tenant_db_user} "
-		f"--db-root-password '{tenant_db_password}' "
-		f"--db-name {site_name} "
-		f"--mariadb-user-host-login-scope='%' "
-		f"--admin-password '{admin_password}' "
-		f"--no-mariadb-socket"
-	)
+    # 1️⃣ CREATE SITE USING REMOTE DB
+    create_cmd = (
+        f"{BENCH_BIN} new-site {site_name} "
+        f"--db-host {tenant_db_host} "
+        f"--db-root-username {tenant_db_user} "
+        f"--db-root-password '{tenant_db_password}' "
+        f"--db-name {site_name} "
+        f"--mariadb-user-host-login-scope='%' "
+        f"--admin-password '{admin_password}' "
+        f"--no-mariadb-socket"
+    )
+    commands.append(create_cmd)
 
-	commands.append(create_cmd)
+    # 2️⃣ INSTALL APPS
+    commands.append(f"{BENCH_BIN} --site {site_name} install-app payments")
+    commands.append(f"{BENCH_BIN} --site {site_name} install-app erpnext")
+    commands.append(f"{BENCH_BIN} --site {site_name} install-app hrms")
+    commands.append(f"{BENCH_BIN} --site {site_name} install-app lending")
+    commands.append(f"{BENCH_BIN} --site {site_name} install-app foxerp_saas")
 
-	############# core code##################
-	# if install_erpnext == "true":
-	# 	with open("apps.txt", "r") as f:
-	# 		app_list = f.read()
-	# 	if "erpnext" not in app_list:
-	# 		commands.append("bench get-app erpnext")
-	# 	commands.append(
-	# 		"bench --site {site_name} install-app erpnext".format(site_name=site_name)
-	# 	)
-	# 	commands.append(f"bench --site {site_name} migrate".format(site_name=site_name))
+    # 3️⃣ MIGRATE SITE
+    commands.append(f"{BENCH_BIN} --site {site_name} migrate")
 
-	###############################
-	commands.append(
-			"bench --site {site_name} install-app payments".format(site_name=site_name)
-		)
-	commands.append(
-			"bench --site {site_name} install-app erpnext".format(site_name=site_name)
-		)
-	commands.append(
-			"bench --site {site_name} install-app hrms".format(site_name=site_name)
-		)
-	
-	commands.append(
-			"bench --site {site_name} install-app lending".format(site_name=site_name)
-		)
+    # 4️⃣ DEBUG LOG
+    frappe.log_error("command 287", str({"aa": commands, "ab": site_name}))
 
-	commands.append(
-			"bench --site {site_name} install-app foxerp_saas".format(site_name=site_name)
-		)
-	
-	
-	commands.append(f"bench --site {site_name} migrate".format(site_name=site_name))
-	frappe.log_error("command 287",str({"aa":commands,"ab":site_name}))
-	frappe.enqueue(
-		"bench_manager.bench_manager.doctype.site.site.jop_site_creation",
-		commands=commands,
-		doctype="Bench Settings",
-		key=key,
-		site_name = site_name,
-		is_async = a_async
-	)
+    # 5️⃣ ENQUEUE JOB
+    frappe.enqueue(
+        "bench_manager.bench_manager.doctype.site.site.jop_site_creation",
+        commands=commands,
+        doctype="Bench Settings",
+        key=key,
+        site_name=site_name,
+        is_async=a_async,
+        queue="long",
+        timeout=3600  # optional but recommended for long-running jobs
+    )
+
 
 
 
 def jop_site_creation(commands, doctype, key,site_name):
 	from bench_manager.bench_manager.utils import run_command
-	run_command(commands=commands,doctype="Bench Settings",key=key)
+	a = run_command(commands=commands,doctype="Bench Settings",key=key)
+	frappe.log_error("command 289",str({"aa":a,"ab":commands,"key":key}))
 	sync_sites()
 	site = frappe.get_doc("Site",site_name)
 	if site.developer_flag == 1:
