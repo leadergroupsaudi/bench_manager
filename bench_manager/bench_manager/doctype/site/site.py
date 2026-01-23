@@ -75,8 +75,9 @@ class Site(Document):
 		if self.site_name not in all_sites:
 			list_apps = "frappe"
 		else:
+			BENCH_BIN = "/usr/local/bin/bench"
 			list_apps = check_output(
-				shlex.split("bench --site {site_name} list-apps".format(site_name=self.site_name)),
+				shlex.split("{BENCH_BIN} --site {site_name} list-apps".format(BENCH_BIN = BENCH_BIN,site_name=self.site_name)),
 				cwd="..",
 			)
 
@@ -292,6 +293,7 @@ def create_site(site_name, install_erpnext, mysql_password, admin_password, key,
     commands.append(create_cmd)
 
     # 2️⃣ INSTALL APPS
+    commands.append(f"{BENCH_BIN} --site {site_name} set-config developer_mode 1")
     commands.append(f"{BENCH_BIN} --site {site_name} install-app payments")
     commands.append(f"{BENCH_BIN} --site {site_name} install-app erpnext")
     commands.append(f"{BENCH_BIN} --site {site_name} install-app hrms")
