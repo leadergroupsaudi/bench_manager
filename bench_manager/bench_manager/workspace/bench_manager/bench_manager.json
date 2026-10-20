@@ -1,0 +1,123 @@
+{
+ "app": "bench_manager",
+ "charts": [],
+ "content": "[{\"id\":\"bmShortcut1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Site\",\"col\":3}},{\"id\":\"bmShortcut2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"App\",\"col\":3}},{\"id\":\"bmShortcut3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bench Settings\",\"col\":3}},{\"id\":\"bmSpacer01\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"bmCard0001\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Setup\",\"col\":4}},{\"id\":\"bmCard0002\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Management\",\"col\":4}}]",
+ "creation": "2026-10-19 12:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "tool",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Bench Manager",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bench Setup",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "App",
+   "link_count": 0,
+   "link_to": "App",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Site",
+   "link_count": 0,
+   "link_to": "Site",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bench Management",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Site Backup",
+   "link_count": 0,
+   "link_to": "Site Backup",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bench Manager Command",
+   "link_count": 0,
+   "link_to": "Bench Manager Command",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bench Settings",
+   "link_count": 0,
+   "link_to": "Bench Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-19 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Bench Manager",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 50.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Site",
+   "link_to": "Site",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "App",
+   "link_to": "App",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bench Settings",
+   "link_to": "Bench Settings",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Bench Manager",
+ "type": "Workspace"
+}

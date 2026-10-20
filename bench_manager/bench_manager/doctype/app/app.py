@@ -7,6 +7,8 @@ import os
 import re
 import shlex
 import time
+from email.utils import parseaddr
+from importlib import metadata as importlib_metadata
 from subprocess import PIPE, STDOUT, Popen, check_output
 
 import frappe
@@ -15,6 +17,47 @@ from bench_manager.bench_manager.utils import (
 	verify_whitelisted_call,
 )
 from frappe.model.document import Document
+
+
+def get_app_metadata(app_name):
+	"""Return version/summary/author details of an installed app, or None.
+
+	Frappe v16 apps are installed from pyproject.toml, so the details live in the
+	package's dist-info. The legacy <app>.egg-info/PKG-INFO file is used as fallback.
+	"""
+	try:
+		meta = importlib_metadata.metadata(app_name)
+	except importlib_metadata.PackageNotFoundError:
+		meta = None
+
+	if meta is not None:
+		author = meta.get("Author")
+		author_email = meta.get("Author-email") or ""
+		name, address = parseaddr(author_email)
+		return {
+			"version": meta.get("Version") or "",
+			"summary": meta.get("Summary") or "",
+			"author": author or name or "",
+			"author_email": address or author_email,
+		}
+
+	pkg_info_file = os.path.join("..", "apps", app_name, "{0}.egg-info".format(app_name), "PKG-INFO")
+	if not os.path.isfile(pkg_info_file):
+		return None
+
+	with open(pkg_info_file, "r") as f:
+		data = frappe.as_unicode(f.read())
+	result = {"version": "", "summary": "", "author": "", "author_email": ""}
+	for key, field in (
+		("Version", "version"),
+		("Summary", "summary"),
+		("Author", "author"),
+		("Author-email", "author_email"),
+	):
+		found = re.search("^{0}: (.*)$".format(key), data, flags=re.MULTILINE)
+		if found:
+			result[field] = found.group(1).strip()
+	return result
 
 
 class App(Document):
@@ -33,14 +76,10 @@ class App(Document):
 			if self.developer_flag == 0:
 				frappe.throw("Creation of new apps is not supported at the moment!")
 			self.developer_flag = 0
-			app_data_path = os.path.join(
-				"..",
-				"apps",
-				self.app_name,
-				"{app_name}.egg-info".format(app_name=self.app_name),
-				"PKG-INFO",
-			)
-			while not os.path.isfile(app_data_path):
+			# wait briefly for app metadata (e.g. right after get-app), but never forever
+			for _attempt in range(5):
+				if get_app_metadata(self.app_name):
+					break
 				time.sleep(2)
 			self.update_app_details()
 		else:
@@ -80,30 +119,12 @@ class App(Document):
 				check_output(shlex.split("rm -r ../apps/{app_name}".format(app_name=self.app_name)))
 
 	def update_app_details(self):
-		pkg_info_file = os.path.join(
-			"..",
-			"apps",
-			self.app_name,
-			"{app_name}.egg-info".format(app_name=self.app_name),
-			"PKG-INFO",
-		)
-		if os.path.isfile(pkg_info_file):
-			app_data_path = pkg_info_file
-			with open(app_data_path, "r") as f:
-				app_data = f.readlines()
-			app_data = frappe.as_unicode("".join(app_data)).split("\n")
-			if "" in app_data:
-				app_data.remove("")
-			app_data = [x + "\n" for x in app_data]
-			for data in app_data:
-				if "Version:" in data:
-					self.version = "".join(re.findall("Version: (.*?)\\n", data))
-				elif "Summary:" in data:
-					self.app_description = "".join(re.findall("Summary: (.*?)\\n", data))
-				elif "Author:" in data:
-					self.app_publisher = "".join(re.findall("Author: (.*?)\\n", data))
-				elif "Author-email:" in data:
-					self.app_email = "".join(re.findall("Author-email: (.*?)\\n", data))
+		app_meta = get_app_metadata(self.app_name)
+		if app_meta:
+			self.version = app_meta["version"]
+			self.app_description = app_meta["summary"]
+			self.app_publisher = app_meta["author"]
+			self.app_email = app_meta["author_email"]
 			self.app_title = self.app_name
 			self.app_title = self.app_title.replace("-", " ")
 			self.app_title = self.app_title.replace("_", " ")

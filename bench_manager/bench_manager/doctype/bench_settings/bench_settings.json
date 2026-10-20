@@ -25,6 +25,17 @@
   "admin_password",
   "column_break_16",
   "root_password",
+  "site_creation_section",
+  "db_host",
+  "db_root_user",
+  "db_root_password",
+  "site_creation_column_break",
+  "db_host_login_scope",
+  "db_name_pattern",
+  "bench_binary",
+  "developer_mode_on_create",
+  "site_apps_section",
+  "site_apps",
   "dropbox_settings",
   "app_access_key",
   "send_notifications_to",
@@ -70,10 +81,10 @@
    "read_only": 1
   },
   {
-    "fieldname": "password_root1",
-    "fieldtype": "Data",
-    "label": "Password Root"
-   },
+   "fieldname": "password_root1",
+   "fieldtype": "Data",
+   "label": "Password Root"
+  },
   {
    "fieldname": "column_break_2",
    "fieldtype": "Column Break"
@@ -336,11 +347,73 @@
    "fieldname": "file_backup",
    "fieldtype": "Check",
    "label": "File Backup"
+  },
+  {
+   "fieldname": "site_creation_section",
+   "fieldtype": "Section Break",
+   "label": "Site Creation"
+  },
+  {
+   "fieldname": "db_host",
+   "fieldtype": "Data",
+   "label": "DB Host",
+   "description": "Database server used for new sites (e.g. remote tenant DB server)"
+  },
+  {
+   "fieldname": "db_root_user",
+   "fieldtype": "Data",
+   "label": "DB Root Username"
+  },
+  {
+   "fieldname": "db_root_password",
+   "fieldtype": "Password",
+   "label": "DB Root Password"
+  },
+  {
+   "fieldname": "site_creation_column_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "%",
+   "fieldname": "db_host_login_scope",
+   "fieldtype": "Data",
+   "label": "DB User Host Login Scope"
+  },
+  {
+   "default": "{site_name}",
+   "fieldname": "db_name_pattern",
+   "fieldtype": "Data",
+   "label": "DB Name Pattern",
+   "description": "Use {site_name} as placeholder"
+  },
+  {
+   "fieldname": "bench_binary",
+   "fieldtype": "Data",
+   "label": "Bench Binary Path",
+   "description": "Leave empty to auto-detect from PATH"
+  },
+  {
+   "default": "0",
+   "fieldname": "developer_mode_on_create",
+   "fieldtype": "Check",
+   "label": "Enable Developer Mode on New Sites"
+  },
+  {
+   "fieldname": "site_apps_section",
+   "fieldtype": "Section Break",
+   "label": "Apps To Install On New Sites"
+  },
+  {
+   "fieldname": "site_apps",
+   "fieldtype": "Table",
+   "label": "Apps",
+   "options": "Bench Site App",
+   "description": "Installed in the listed order, followed by migrate"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2022-08-31 11:01:24.265506",
+ "modified": "2026-10-19 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Bench Manager",
  "name": "Bench Settings",

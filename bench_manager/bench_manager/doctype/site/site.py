@@ -13,7 +13,10 @@ from subprocess import PIPE, Popen, check_output
 import frappe
 import pymysql
 from bench_manager.bench_manager.utils import (
+	get_bench_binary,
+	get_site_creation_settings,
 	safe_decode,
+	validate_site_name,
 	verify_whitelisted_call,
 )
 from frappe.model.document import Document
@@ -75,7 +78,7 @@ class Site(Document):
 		if self.site_name not in all_sites:
 			list_apps = "frappe"
 		else:
-			BENCH_BIN = "/usr/local/bin/bench"
+			BENCH_BIN = get_bench_binary()
 			list_apps = check_output(
 				shlex.split("{BENCH_BIN} --site {site_name} list-apps".format(BENCH_BIN = BENCH_BIN,site_name=self.site_name)),
 				cwd="..",
@@ -268,63 +271,62 @@ def verify_password(site_name, mysql_password):
 	return "console"
 
 @frappe.whitelist()
-def create_site(site_name, install_erpnext, mysql_password, admin_password, key, a_async=True):
-    verify_whitelisted_call()
+def create_site(
+	site_name, install_erpnext=None, mysql_password=None, admin_password=None, key=None, a_async=True
+):
+	# install_erpnext and mysql_password are kept for backward compatibility with
+	# existing callers; DB credentials and apps now come from Bench Settings.
+	verify_whitelisted_call()
+	validate_site_name(site_name)
+	config = get_site_creation_settings()
+	bench_bin = config["bench_bin"]
+	db_name = config["db_name_pattern"].format(site_name=site_name)
 
-    # REMOTE DB CONFIG (TENANT DATABASE SERVER)
-    tenant_db_host = "10.1.1.205"
-    tenant_db_user = "frappe_admin"
-    tenant_db_password = "Leader@321"
+	commands = [
+		" ".join(
+			[
+				bench_bin,
+				"new-site",
+				shlex.quote(site_name),
+				"--db-host",
+				shlex.quote(config["db_host"]),
+				"--db-root-username",
+				shlex.quote(config["db_root_user"]),
+				"--db-root-password",
+				shlex.quote(config["db_root_password"]),
+				"--db-name",
+				shlex.quote(db_name),
+				"--mariadb-user-host-login-scope={}".format(shlex.quote(config["db_host_login_scope"])),
+				"--admin-password",
+				shlex.quote(admin_password or ""),
+				"--no-mariadb-socket",
+			]
+		)
+	]
 
-    commands = []
-    BENCH_BIN = "/usr/local/bin/bench"
+	if config["developer_mode"]:
+		commands.append(f"{bench_bin} --site {site_name} set-config developer_mode 1")
 
-    # 1️⃣ CREATE SITE USING REMOTE DB
-    create_cmd = (
-        f"{BENCH_BIN} new-site {site_name} "
-        f"--db-host {tenant_db_host} "
-        f"--db-root-username {tenant_db_user} "
-        f"--db-root-password '{tenant_db_password}' "
-        f"--db-name {site_name} "
-        f"--mariadb-user-host-login-scope='%' "
-        f"--admin-password '{admin_password}' "
-        f"--no-mariadb-socket"
-    )
-    commands.append(create_cmd)
+	for app in config["apps"]:
+		commands.append(f"{bench_bin} --site {site_name} install-app {shlex.quote(app)}")
 
-    # 2️⃣ INSTALL APPS
-    commands.append(f"{BENCH_BIN} --site {site_name} set-config developer_mode 1")
-    commands.append(f"{BENCH_BIN} --site {site_name} install-app payments")
-    commands.append(f"{BENCH_BIN} --site {site_name} install-app erpnext")
-    commands.append(f"{BENCH_BIN} --site {site_name} install-app hrms")
-    commands.append(f"{BENCH_BIN} --site {site_name} install-app lending")
-    commands.append(f"{BENCH_BIN} --site {site_name} install-app foxerp_saas")
+	commands.append(f"{bench_bin} --site {site_name} migrate")
 
-    # 3️⃣ MIGRATE SITE
-    commands.append(f"{BENCH_BIN} --site {site_name} migrate")
-
-    # 4️⃣ DEBUG LOG
-    frappe.log_error("command 287", str({"aa": commands, "ab": site_name}))
-
-    # 5️⃣ ENQUEUE JOB
-    frappe.enqueue(
-        "bench_manager.bench_manager.doctype.site.site.jop_site_creation",
-        commands=commands,
-        doctype="Bench Settings",
-        key=key,
-        site_name=site_name,
-        is_async=a_async,
-        queue="long",
-        timeout=3600  # optional but recommended for long-running jobs
-    )
-
-
+	frappe.enqueue(
+		"bench_manager.bench_manager.doctype.site.site.jop_site_creation",
+		commands=commands,
+		doctype="Bench Settings",
+		key=key,
+		site_name=site_name,
+		is_async=a_async,
+		queue="long",
+		timeout=3600,
+	)
 
 
 def jop_site_creation(commands, doctype, key,site_name):
 	from bench_manager.bench_manager.utils import run_command
-	a = run_command(commands=commands,doctype="Bench Settings",key=key)
-	frappe.log_error("command 289",str({"aa":a,"ab":commands,"key":key}))
+	run_command(commands=commands,doctype="Bench Settings",key=key)
 	sync_sites()
 	site = frappe.get_doc("Site",site_name)
 	if site.developer_flag == 1:

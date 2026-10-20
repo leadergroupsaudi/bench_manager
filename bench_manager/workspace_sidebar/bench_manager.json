@@ -1,0 +1,89 @@
+{
+ "app": "bench_manager",
+ "creation": "2026-10-19 12:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "tool",
+ "idx": 0,
+ "items": [
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "home",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Home",
+   "link_to": "Bench Manager",
+   "link_type": "Workspace",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "globe",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Site",
+   "link_to": "Site",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "package",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "App",
+   "link_to": "App",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "database-backup",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Site Backup",
+   "link_to": "Site Backup",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "terminal",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Bench Manager Command",
+   "link_to": "Bench Manager Command",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "settings",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Bench Settings",
+   "link_to": "Bench Settings",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-19 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Bench Manager",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "Bench Manager"
+}

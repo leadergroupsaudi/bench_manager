@@ -1,0 +1,20 @@
+{
+ "app": "bench_manager",
+ "creation": "2026-10-19 12:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "tool",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "Bench Manager",
+ "link_to": "Bench Manager",
+ "link_type": "Workspace Sidebar",
+ "modified": "2026-10-19 12:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Bench Manager",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [],
+ "standard": 1
+}

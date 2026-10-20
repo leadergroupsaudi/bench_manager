@@ -26,15 +26,14 @@ from bench_manager.bench_manager.utils import (
 from frappe.model.document import Document
 import json
 import os
-import dropbox
+import time
 from rq.timeouts import JobTimeoutException
 
 import frappe
 from frappe import _
-from frappe.integrations.offsite_backup_utils import (
+from bench_manager.bench_manager.offsite_utils import (
 	get_chunk_site,
 	send_email,
-	validate_file_size,
 )
 from frappe.integrations.utils import make_post_request
 from frappe.model.document import Document
@@ -47,6 +46,18 @@ from frappe.utils import (
 from frappe.utils.background_jobs import enqueue
 
 ignore_list = [".DS_Store"]
+
+
+def get_dropbox():
+	"""Import dropbox lazily so the app installs and loads without it."""
+	try:
+		import dropbox
+	except ImportError:
+		frappe.throw(
+			_("The 'dropbox' python package is not installed. Run: bench pip install dropbox"),
+			title=_("Dropbox Not Installed"),
+		)
+	return dropbox
 
 class BenchSettings(Document):
 	site_config_fields = [
@@ -86,7 +97,7 @@ class BenchSettings(Document):
 	def validate(self):
 		self.sync_site_config()
 		self.update_git_details()
-		current_time = frappe.utils.time.time()
+		current_time = time.time()
 		if current_time - self.last_sync_timestamp > 10 * 60:
 			sync_all(in_background=True)
 
@@ -330,7 +341,7 @@ def sync_all(in_background=False):
 		"bench_manager.bench_manager.doctype.bench_settings.bench_settings.sync_backups"
 	)
 	frappe.set_value(
-		"Bench Settings", None, "last_sync_timestamp", frappe.utils.time.time()
+		"Bench Settings", None, "last_sync_timestamp", time.time()
 	)
 
 
@@ -345,7 +356,7 @@ def setup_and_restart_nginx(root_password):
     run_command(commands,"Bench Settings",dt_string)
     
 def run_command(commands, doctype, key, cwd="..", docname=" ", after_command=None):
-	start_time = frappe.utils.time.time()
+	start_time = time.time()
 	console_dump = ""
 	logged_command = " && ".join(commands)
 	logged_command += (
@@ -484,6 +495,7 @@ def take_backup_to_dropbox(site_list,retry_count=0, upload_db_backup=True):
 
 @frappe.whitelist()
 def get_dropbox_authorize_url():
+	dropbox = get_dropbox()
 	app_details = get_dropbox_settings(redirect_uri=True)
 	dropbox_oauth_flow = dropbox.DropboxOAuth2Flow(
 		consumer_key=app_details["app_key"],
@@ -521,6 +533,7 @@ def get_redirect_url():
 
 
 def backup_to_dropbox(site_list,upload_db_backup=True):
+	dropbox = get_dropbox()
 	if not frappe.db:
 		frappe.connect()
 
@@ -560,6 +573,7 @@ def backup_to_dropbox(site_list,upload_db_backup=True):
 
 def upload_file_to_dropbox(filename, folder, dropbox_client):
 	"""upload files with chunk of 15 mb to reduce session append calls"""
+	dropbox = get_dropbox()
 	if not os.path.exists(filename):
 		return
 
@@ -600,6 +614,7 @@ def upload_file_to_dropbox(filename, folder, dropbox_client):
 
 
 def create_folder_if_not_exists(folder, dropbox_client):
+	dropbox = get_dropbox()
 	try:
 		dropbox_client.files_get_metadata(folder)
 	except dropbox.exceptions.ApiError as e:
@@ -646,6 +661,7 @@ def get_dropbox_settings(redirect_uri=False):
 
 @frappe.whitelist()
 def dropbox_auth_finish(return_access_token=False):
+	dropbox = get_dropbox()
 	app_details = get_dropbox_settings(redirect_uri=True)
 	callback = frappe.form_dict
 	close = '<p class="text-muted">' + _("Please close this window") + "</p>"
