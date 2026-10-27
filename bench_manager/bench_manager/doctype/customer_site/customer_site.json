@@ -1,0 +1,613 @@
+{
+ "actions": [],
+ "autoname": "field:site_name",
+ "creation": "2026-10-27 16:54:38.646987",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "identity_section",
+  "prefix",
+  "site_name",
+  "base_domain",
+  "marketing_order_id",
+  "identity_cb",
+  "status",
+  "start_date",
+  "plan_name",
+  "site_url",
+  "customer_section",
+  "customer_name",
+  "customer_email",
+  "company_section",
+  "company_name",
+  "company_abbr",
+  "chart_of_accounts",
+  "company_cb",
+  "country",
+  "language",
+  "timezone",
+  "currency",
+  "fy_start_date",
+  "fy_end_date",
+  "first_user_section",
+  "first_user_full_name",
+  "first_user_email",
+  "persona_notes",
+  "payload_hash",
+  "limits_section",
+  "max_users",
+  "license_end_date",
+  "provisioning_section",
+  "current_step",
+  "attempts",
+  "failed_at",
+  "created_by_job",
+  "provisioning_cb",
+  "bench_command",
+  "last_error",
+  "error_log",
+  "steps",
+  "admin_password",
+  "publish_section",
+  "publish_to_customer",
+  "published_on",
+  "published_by",
+  "publish_cb",
+  "email_sent",
+  "email_sent_on",
+  "admin_password_rotated",
+  "publish_error",
+  "publish_error_log",
+  "verification_section",
+  "verified_by",
+  "verified_on",
+  "verification_notes",
+  "domain_section",
+  "domain_check_status",
+  "domain_checked_on",
+  "domain_cb",
+  "domain_check_detail",
+  "domain_check_token",
+  "domain_alerted",
+  "stop_section",
+  "is_stopped",
+  "stopped_on",
+  "stopped_by",
+  "stop_reason",
+  "stop_cb",
+  "resumed_on",
+  "last_backup",
+  "backup_status",
+  "stop_state",
+  "stop_error_log",
+  "status_before_stop"
+ ],
+ "fields": [
+  {
+   "fieldname": "identity_section",
+   "fieldtype": "Section Break",
+   "label": "Site"
+  },
+  {
+   "description": "Lowercase letters, digits and hyphens, e.g. customer1",
+   "fieldname": "prefix",
+   "fieldtype": "Data",
+   "label": "Prefix",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Site Name",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "base_domain",
+   "fieldtype": "Data",
+   "label": "Base Domain",
+   "read_only": 1
+  },
+  {
+   "fieldname": "marketing_order_id",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Marketing Order ID",
+   "reqd": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "identity_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Queued",
+   "description": "Changes only through the action buttons (Start/Retry, Publish, Stop...).",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Queued\nCreating\nConfiguring\nAwaiting Domain Mapping\nReady\nPublished\nStopped\nFailed",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "plan_name",
+   "fieldtype": "Data",
+   "label": "Plan Name"
+  },
+  {
+   "fieldname": "site_url",
+   "fieldtype": "Data",
+   "label": "Site URL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "customer_section",
+   "fieldtype": "Section Break",
+   "label": "Customer"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Customer Email",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company_section",
+   "fieldtype": "Section Break",
+   "label": "Company"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Company Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company_abbr",
+   "fieldtype": "Data",
+   "label": "Company Abbreviation",
+   "reqd": 1
+  },
+  {
+   "description": "Options load from the selected country, same as the setup wizard.",
+   "fieldname": "chart_of_accounts",
+   "fieldtype": "Select",
+   "label": "Chart Of Accounts",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country",
+   "reqd": 1
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "Language",
+   "reqd": 1
+  },
+  {
+   "description": "Fetched automatically from the country.",
+   "fieldname": "timezone",
+   "fieldtype": "Data",
+   "label": "Timezone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fy_start_date",
+   "fieldtype": "Date",
+   "label": "Financial Year Start",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fy_end_date",
+   "fieldtype": "Date",
+   "label": "Financial Year End",
+   "read_only": 1
+  },
+  {
+   "fieldname": "first_user_section",
+   "fieldtype": "Section Break",
+   "label": "First User"
+  },
+  {
+   "fieldname": "first_user_full_name",
+   "fieldtype": "Data",
+   "label": "First User Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "first_user_email",
+   "fieldtype": "Data",
+   "label": "First User Email",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "description": "Team size, type of business, current software (informational)",
+   "fieldname": "persona_notes",
+   "fieldtype": "Small Text",
+   "label": "Persona Notes"
+  },
+  {
+   "fieldname": "payload_hash",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Payload Hash",
+   "read_only": 1
+  },
+  {
+   "fieldname": "limits_section",
+   "fieldtype": "Section Break",
+   "label": "Limits (optional)"
+  },
+  {
+   "fieldname": "max_users",
+   "fieldtype": "Int",
+   "label": "Max Users"
+  },
+  {
+   "fieldname": "license_end_date",
+   "fieldtype": "Date",
+   "label": "License End Date"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "provisioning_section",
+   "fieldtype": "Section Break",
+   "label": "Provisioning (filled automatically)"
+  },
+  {
+   "fieldname": "current_step",
+   "fieldtype": "Data",
+   "label": "Current Step",
+   "read_only": 1
+  },
+  {
+   "fieldname": "attempts",
+   "fieldtype": "Int",
+   "label": "Attempts",
+   "read_only": 1
+  },
+  {
+   "fieldname": "failed_at",
+   "fieldtype": "Datetime",
+   "label": "Failed At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_by_job",
+   "fieldtype": "Check",
+   "label": "Created By Job",
+   "read_only": 1
+  },
+  {
+   "fieldname": "provisioning_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bench_command",
+   "fieldtype": "Link",
+   "label": "Bench Command",
+   "options": "Bench Manager Command",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_error",
+   "fieldtype": "Small Text",
+   "label": "Last Error",
+   "read_only": 1
+  },
+  {
+   "description": "Details of the last provisioning failure. Cleared when the site is retried.",
+   "fieldname": "error_log",
+   "fieldtype": "Link",
+   "label": "Error Log",
+   "options": "Error Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "steps",
+   "fieldtype": "Table",
+   "label": "Steps",
+   "options": "Customer Site Step"
+  },
+  {
+   "description": "Generated during provisioning so the team can verify the site. Replaced when the site is published.",
+   "fieldname": "admin_password",
+   "fieldtype": "Password",
+   "label": "Temporary Administrator Password",
+   "permlevel": 1
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "publish_section",
+   "fieldtype": "Section Break",
+   "label": "Publish"
+  },
+  {
+   "description": "Tick only after the site has been verified manually. This notifies the customer.",
+   "fieldname": "publish_to_customer",
+   "fieldtype": "Check",
+   "label": "Publish To Customer"
+  },
+  {
+   "fieldname": "published_on",
+   "fieldtype": "Datetime",
+   "label": "Published On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "published_by",
+   "fieldtype": "Link",
+   "label": "Published By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "publish_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email_sent",
+   "fieldtype": "Check",
+   "label": "Email Sent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "email_sent_on",
+   "fieldtype": "Datetime",
+   "label": "Email Sent On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "admin_password_rotated",
+   "fieldtype": "Check",
+   "label": "Admin Password Rotated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "publish_error",
+   "fieldtype": "Small Text",
+   "label": "Publish Error",
+   "read_only": 1
+  },
+  {
+   "fieldname": "publish_error_log",
+   "fieldtype": "Link",
+   "label": "Publish Error Log",
+   "options": "Error Log",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "verification_section",
+   "fieldtype": "Section Break",
+   "label": "Manual Verification"
+  },
+  {
+   "fieldname": "verified_by",
+   "fieldtype": "Link",
+   "label": "Verified By",
+   "options": "User"
+  },
+  {
+   "fieldname": "verified_on",
+   "fieldtype": "Datetime",
+   "label": "Verified On"
+  },
+  {
+   "fieldname": "verification_notes",
+   "fieldtype": "Small Text",
+   "label": "Verification Notes"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "domain_section",
+   "fieldtype": "Section Break",
+   "label": "Domain Check"
+  },
+  {
+   "fieldname": "domain_check_status",
+   "fieldtype": "Select",
+   "label": "Domain Check Status",
+   "options": "\nReachable\nNot reachable",
+   "read_only": 1
+  },
+  {
+   "fieldname": "domain_checked_on",
+   "fieldtype": "Datetime",
+   "label": "Domain Checked On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "domain_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "domain_check_detail",
+   "fieldtype": "Small Text",
+   "label": "Domain Check Detail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "domain_check_token",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Domain Check Token",
+   "read_only": 1
+  },
+  {
+   "fieldname": "domain_alerted",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Domain Alerted",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "stop_section",
+   "fieldtype": "Section Break",
+   "label": "Stop / Resume"
+  },
+  {
+   "fieldname": "is_stopped",
+   "fieldtype": "Check",
+   "label": "Is Stopped",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stopped_on",
+   "fieldtype": "Datetime",
+   "label": "Stopped On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stopped_by",
+   "fieldtype": "Data",
+   "label": "Stopped By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stop_reason",
+   "fieldtype": "Small Text",
+   "label": "Stop Reason"
+  },
+  {
+   "fieldname": "stop_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "resumed_on",
+   "fieldtype": "Datetime",
+   "label": "Resumed On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_backup",
+   "fieldtype": "Data",
+   "label": "Last Backup",
+   "read_only": 1
+  },
+  {
+   "fieldname": "backup_status",
+   "fieldtype": "Select",
+   "label": "Backup Status",
+   "options": "\nOK\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stop_state",
+   "fieldtype": "Select",
+   "label": "Stop State",
+   "options": "\nPending\nBacking up\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stop_error_log",
+   "fieldtype": "Link",
+   "label": "Stop Error Log",
+   "options": "Error Log",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status_before_stop",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Status Before Stop",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-27 16:54:38.646987",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "Customer Site",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "SaaS Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "SaaS Support",
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "SaaS Admin",
+   "write": 1
+  }
+ ],
+ "quick_entry": 0,
+ "search_fields": "prefix,customer_email,marketing_order_id,status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "site_name",
+ "track_changes": 1
+}
