@@ -16,6 +16,8 @@ app_license = "MIT"
 app_include_css = "/assets/bench_manager/css/bench_manager.css"
 app_include_js = "/assets/bench_manager/js/bench_manager.js"
 
+after_install = "bench_manager.install.after_install"
+
 # include js, css files in header of web template
 # web_include_css = "/assets/bench_manager/css/bench_manager.css"
 # web_include_js = "/assets/bench_manager/js/bench_manager.js"
@@ -89,6 +91,12 @@ app_include_js = "/assets/bench_manager/js/bench_manager.js"
 # ---------------
 
 scheduler_events = {
+    "cron": {
+        # sites waiting for domain mapping: record whether they answer yet (never changes status)
+        "*/10 * * * *": [
+            "bench_manager.saas.domain.check_pending_domains"
+        ]
+    },
     "daily_long": [
 		"bench_manager.bench_manager.doctype.bench_settings.bench_settings.backup_sites_with_daily_option",
 		"bench_manager.bench_manager.doctype.bench_settings.bench_settings.dropbox_backup_sites_with_daily_option"

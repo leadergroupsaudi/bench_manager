@@ -1,0 +1,209 @@
+{
+ "actions": [],
+ "creation": "2026-10-27 16:54:38.646987",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "site_naming_section",
+  "base_domain",
+  "min_prefix_length",
+  "max_prefix_length",
+  "naming_cb",
+  "reserved_prefixes",
+  "api_section",
+  "max_sites_per_hour",
+  "marketing_ip_allowlist",
+  "onboarding_section",
+  "domain_check_base_url",
+  "password_link_validity_days",
+  "onboarding_cb",
+  "backup_failure_policy",
+  "provisioning_section",
+  "max_retries",
+  "pre_check_min_disk_gb",
+  "backup_before_stop",
+  "auto_provision_on_save",
+  "notification_section",
+  "email_account",
+  "publish_email_template",
+  "alert_recipients",
+  "notification_cb",
+  "marketing_callback_url",
+  "marketing_callback_secret"
+ ],
+ "fields": [
+  {
+   "fieldname": "site_naming_section",
+   "fieldtype": "Section Break",
+   "label": "Site Naming"
+  },
+  {
+   "description": "Customer sites are created as <prefix>.<base domain>, e.g. foxerp.net",
+   "fieldname": "base_domain",
+   "fieldtype": "Data",
+   "label": "Base Domain",
+   "reqd": 1
+  },
+  {
+   "default": "3",
+   "fieldname": "min_prefix_length",
+   "fieldtype": "Int",
+   "label": "Min Prefix Length"
+  },
+  {
+   "default": "30",
+   "fieldname": "max_prefix_length",
+   "fieldtype": "Int",
+   "label": "Max Prefix Length"
+  },
+  {
+   "fieldname": "naming_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "admin\nwww\napi\nmail\nsmtp\nftp\nlesaas\nlocal\ntest\nstaging\ndemo\nsupport\napp\ndashboard\nstatic\ncdn",
+   "description": "One per line. These prefixes can never be used for a customer site.",
+   "fieldname": "reserved_prefixes",
+   "fieldtype": "Small Text",
+   "label": "Reserved Prefixes"
+  },
+  {
+   "fieldname": "api_section",
+   "fieldtype": "Section Break",
+   "label": "Marketing API"
+  },
+  {
+   "default": "10",
+   "description": "Safety cap on create-site requests accepted per rolling hour.",
+   "fieldname": "max_sites_per_hour",
+   "fieldtype": "Int",
+   "label": "Max New Sites Per Hour"
+  },
+  {
+   "description": "Optional. One IP per line. Leave empty to allow any IP (the API key is still required).",
+   "fieldname": "marketing_ip_allowlist",
+   "fieldtype": "Small Text",
+   "label": "Marketing IP Allowlist"
+  },
+  {
+   "fieldname": "onboarding_section",
+   "fieldtype": "Section Break",
+   "label": "Domain Check, Publishing and Backups"
+  },
+  {
+   "default": "https://{site}",
+   "description": "Used to test that a site answers on its own domain. {site} is replaced by the site name. For local testing use http://{site}:8000",
+   "fieldname": "domain_check_base_url",
+   "fieldtype": "Data",
+   "label": "Domain Check Base URL"
+  },
+  {
+   "default": "2",
+   "description": "How long the first user's password-setup link in the publish email stays valid.",
+   "fieldname": "password_link_validity_days",
+   "fieldtype": "Int",
+   "label": "Password Setup Link Validity (days)"
+  },
+  {
+   "fieldname": "onboarding_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Stop anyway",
+   "description": "Stopping never deletes data, so the default is to stop and raise an alert.",
+   "fieldname": "backup_failure_policy",
+   "fieldtype": "Select",
+   "label": "If Backup Before Stop Fails",
+   "options": "Stop anyway\nAbort stop"
+  },
+  {
+   "fieldname": "provisioning_section",
+   "fieldtype": "Section Break",
+   "label": "Provisioning"
+  },
+  {
+   "default": "3",
+   "fieldname": "max_retries",
+   "fieldtype": "Int",
+   "label": "Max Retries"
+  },
+  {
+   "default": "5",
+   "fieldname": "pre_check_min_disk_gb",
+   "fieldtype": "Int",
+   "label": "Minimum Free Disk (GB)"
+  },
+  {
+   "default": "1",
+   "fieldname": "backup_before_stop",
+   "fieldtype": "Check",
+   "label": "Backup Before Stop"
+  },
+  {
+   "default": "1",
+   "description": "When on, a new Customer Site record starts building its site as soon as it is saved. Turn off to start manually with the Start Provisioning button.",
+   "fieldname": "auto_provision_on_save",
+   "fieldtype": "Check",
+   "label": "Start Provisioning Automatically"
+  },
+  {
+   "fieldname": "notification_section",
+   "fieldtype": "Section Break",
+   "label": "Notifications"
+  },
+  {
+   "fieldname": "email_account",
+   "fieldtype": "Link",
+   "label": "Email Account",
+   "options": "Email Account"
+  },
+  {
+   "fieldname": "publish_email_template",
+   "fieldtype": "Link",
+   "label": "Publish Email Template",
+   "options": "Email Template"
+  },
+  {
+   "description": "Comma or newline separated emails notified about failures.",
+   "fieldname": "alert_recipients",
+   "fieldtype": "Small Text",
+   "label": "Alert Recipients"
+  },
+  {
+   "fieldname": "notification_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "marketing_callback_url",
+   "fieldtype": "Data",
+   "label": "Marketing Callback URL"
+  },
+  {
+   "fieldname": "marketing_callback_secret",
+   "fieldtype": "Password",
+   "label": "Marketing Callback Secret"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-27 16:54:38.646987",
+ "modified_by": "Administrator",
+ "module": "Bench Manager",
+ "name": "SaaS Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "SaaS Admin",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

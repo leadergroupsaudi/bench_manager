@@ -6,7 +6,7 @@
 import re
 import shlex
 import time
-from subprocess import PIPE, STDOUT, Popen
+from subprocess import DEVNULL, PIPE, STDOUT, Popen
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -88,7 +88,12 @@ def validate_site_name(site_name):
 		)
 
 
-def run_command(commands, doctype, key, cwd="..", docname=" ", after_command=None):
+def run_command(commands, doctype, key, cwd="..", docname=" ", after_command=None, realtime=True):
+	"""Run `commands` one after another, stopping at the first one that fails.
+
+	Returns (status, console) where status is "Success" or "Failed". With realtime=False the output is
+	not streamed to the browser (used by unattended jobs) and the commands cannot wait for input.
+	"""
 	verify_whitelisted_call()
 	start_time = time.time()
 	console_dump = ""
@@ -109,35 +114,35 @@ def run_command(commands, doctype, key, cwd="..", docname=" ", after_command=Non
 	)
 	doc.insert()
 	frappe.db.commit()
-	frappe.publish_realtime(
-		key,
-		"Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command),
-		user=frappe.session.user,
-	)
+	if realtime:
+		frappe.publish_realtime(
+			key,
+			"Executing Command:\n{logged_command}\n\n".format(logged_command=logged_command),
+			user=frappe.session.user,
+		)
+	status = "Success"
 	try:
 		for command in commands:
 			terminal = Popen(
-				shlex.split(command), stdin=PIPE, stdout=PIPE, stderr=STDOUT, cwd=cwd
+				shlex.split(command),
+				stdin=PIPE if realtime else DEVNULL,
+				stdout=PIPE,
+				stderr=STDOUT,
+				cwd=cwd,
 			)
 			for c in iter(lambda: safe_decode(terminal.stdout.read(1)), ""):
-				frappe.publish_realtime(key, c, user=frappe.session.user)
+				if realtime:
+					frappe.publish_realtime(key, c, user=frappe.session.user)
 				console_dump += str(c)
-		if terminal.wait():
-			_close_the_doc(
-				start_time, key, console_dump, status="Failed", user=frappe.session.user
-			)
-		else:
-			_close_the_doc(
-				start_time, key, console_dump, status="Success", user=frappe.session.user
-			)
+			# every command must succeed, not only the last one of the chain
+			if terminal.wait():
+				status = "Failed"
+				break
+		_close_the_doc(start_time, key, console_dump, status=status, user=frappe.session.user)
 	except Exception as e:
-		_close_the_doc(
-			start_time,
-			key,
-			"{} \n\n{}".format(e, console_dump),
-			status="Failed",
-			user=frappe.session.user,
-		)
+		status = "Failed"
+		console_dump = "{} \n\n{}".format(e, console_dump)
+		_close_the_doc(start_time, key, console_dump, status=status, user=frappe.session.user)
 	finally:
 		frappe.db.commit()
 		# hack: frappe.db.commit() to make sure the log created is robust,
@@ -148,6 +153,7 @@ def run_command(commands, doctype, key, cwd="..", docname=" ", after_command=Non
 			docname=docname,
 			commands=commands,
 		)
+	return status, console_dump
 
 
 def _close_the_doc(start_time, key, console_dump, status, user):
@@ -180,6 +186,8 @@ def _refresh(doctype, docname, commands):
 def verify_whitelisted_call():
 	if "bench_manager" not in frappe.get_installed_apps():
 		raise ValueError("This site does not have bench manager installed.")
+	# Bench Manager can create/drop sites and read root credentials, so it is for System Managers only.
+	frappe.only_for("System Manager")
 
 
 def safe_decode(string, encoding="utf-8"):

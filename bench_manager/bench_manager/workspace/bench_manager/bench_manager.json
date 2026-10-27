@@ -1,7 +1,7 @@
 {
  "app": "bench_manager",
  "charts": [],
- "content": "[{\"id\":\"bmShortcut1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Site\",\"col\":3}},{\"id\":\"bmShortcut2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"App\",\"col\":3}},{\"id\":\"bmShortcut3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bench Settings\",\"col\":3}},{\"id\":\"bmSpacer01\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"bmCard0001\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Setup\",\"col\":4}},{\"id\":\"bmCard0002\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Management\",\"col\":4}}]",
+ "content": "[{\"id\":\"bmShortcut1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Site\",\"col\":3}},{\"id\":\"bmShortcut2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"App\",\"col\":3}},{\"id\":\"bmShortcut3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bench Settings\",\"col\":3}},{\"id\":\"bmShortcut4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Site\",\"col\":3}},{\"id\":\"bmShortcut5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SaaS Settings\",\"col\":3}},{\"id\":\"bmShortcut6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SaaS Event Log\",\"col\":3}},{\"id\":\"bmSpacer01\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"bmCard0001\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Setup\",\"col\":4}},{\"id\":\"bmCard0002\",\"type\":\"card\",\"data\":{\"card_name\":\"Bench Management\",\"col\":4}}]",
  "creation": "2026-10-19 12:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -114,6 +114,30 @@
    "doc_view": "List",
    "label": "Bench Settings",
    "link_to": "Bench Settings",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customer Site",
+   "link_to": "Customer Site",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SaaS Settings",
+   "link_to": "SaaS Settings",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SaaS Event Log",
+   "link_to": "SaaS Event Log",
    "stats_filter": "[]",
    "type": "DocType"
   }
